@@ -69,7 +69,19 @@ class GreatAlgorithm extends Algorithm {
     List<Card> playableHand = Utils.getPlayableHand(hand, leadSuit, isHeartBroken);
     if (playableHand.size() == 0) return playableHand.get(0);
 
+
+
     if (leadSuit == null) {
+      // あぶり出し
+      if (findCardFromCardsList(Card.SPADES, 13, playableHand)==null && findCardFromCardsList(Card.SPADES, 14, playableHand)==null) {
+        for (int i = 11; i > 1; i--) {
+          Card card = findCardFromCardsList(Card.SPADES, i, playableHand);
+          if (card!=null) {
+            return card;
+          }
+        }
+      }
+
       // 初手で何を出すか
       Card[] weakestHand = new Card [4];
       for (Card card : playableHand) {
@@ -103,22 +115,25 @@ class GreatAlgorithm extends Algorithm {
         }
       }
       // losable[suit]がtrueなら、そのsuitで絶対負けられる
-      
+
       // losable[suit]がtrueで枚数が最も少ないsuitを選ぶ
-      int [] suitArray = suitNum(playableHand);
+      int [] suitArray = suitNumFromList(playableHand);
       int minSuit = -1;
-      for(int i = 0; i < 4; i++){
+      for (int i = 0; i < 4; i++) {
         if (losable[i]) {
-          if (minSuit == -1 && suitArray[i] != 0){
-            minSuit = i;
-            continue;
-          }
-          if (suitArray[i] < suitArray[minSuit] && suitArray[i] != 0){
-            minSuit = i;
+          if (minSuit == -1) {
+            if ( suitArray[i] != 0) {
+              minSuit = i;
+              continue;
+            }
+          } else {
+            if (suitArray[i] < suitArray[minSuit] && suitArray[i] != 0) {
+              minSuit = i;
+            }
           }
         }
       }
-      if (minSuit != -1){
+      if (minSuit != -1) {
         return weakestHand[minSuit];
       }
 
@@ -150,7 +165,7 @@ class GreatAlgorithm extends Algorithm {
       return returnCard;
     } else {  // 場のスートを持っていない場合
       Card submit = null;
-      int [] suitCount = suitNum(playableHand);
+      int [] suitCount = suitNumFromList(playableHand);
       for (Card card : playableHand) {
         if (card.suit == Card.SPADES && card.number == 12) return card;
         submit = submit == null ? card
@@ -169,7 +184,7 @@ class GreatAlgorithm extends Algorithm {
     return this.passedCards;
   }
 
-  int [] suitNum(List<Card> cards) {
+  int [] suitNumFromList(List<Card> cards) {
     int [] suitArray = {0, 0, 0, 0};
     for (Card card : cards) suitArray[card.suit]++;
     return suitArray;
@@ -179,6 +194,13 @@ class GreatAlgorithm extends Algorithm {
     int count = 0;
     for (Card card : cards) if (card.suit==suit)count++;
     return count;
+  }
+
+  Card findCardFromCardsList(int suit, int strength, List<Card> cards ) {
+    for (Card card : cards)
+      if (card.suit==suit && card.strength==strength)
+        return card;
+    return null;
   }
 
   //int canReceive (List<Card> board, Card card, int leadSuit) {
