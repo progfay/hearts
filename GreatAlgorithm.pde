@@ -73,11 +73,12 @@ class GreatAlgorithm extends Algorithm {
       // 初手で何を出すか
       Card[] weakestHand = new Card [4];
       for (Card card : playableHand) {
-        weakestHand[card.suit] = weakestHand[card.suit].strength < card.strength ? weakestHand[card.suit] : card;
+        weakestHand[card.suit] = weakestHand[card.suit] == null ? card
+          : weakestHand[card.suit].strength < card.strength ? weakestHand[card.suit] : card;
       }
       boolean [] losable = new boolean [4];
       for (int suit = 0; suit < 4; suit++) {
-        if (weakestHand[suit].number < 5) {
+        if (weakestHand[suit] == null || weakestHand[suit].number < 5) {
           losable[suit] = true;
           continue;
         }
