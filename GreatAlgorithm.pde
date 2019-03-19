@@ -84,7 +84,21 @@ class GreatAlgorithm extends Algorithm {
     }
 
     if (hasLeadSuit) {
-      // pass
+      
+      int maxStrength = 0;
+      for (Card card : board) {
+        if (card.suit == leadSuit && card.strength > maxStrength) {
+          maxStrength = card.strength;
+        }
+      }
+      Card returnCard = playableHand.get(0);
+      for (Card card : playableHand) {
+        if (maxStrength > card.strength && returnCard.strength < card.strength) {
+          returnCard = card;
+        }
+      }
+      return returnCard;
+      
     } else {
       for (Card card : playableHand) {
         if (card.suit == Card.SPADES && card.number == 12) return card;
