@@ -48,21 +48,36 @@ class GreatAlgorithm extends Algorithm {
           this.hasCard[i][card.suit][card.strength - 2] = i == myStatus.id ? this.ABSOLUTELY : this.NEVER;
         }
       }
+      this.isFirstTurn = false;
+    }
 
-      for (int i = 0; i < board.size(); i++) {
-        int submitter = (myStatus.id - board.size() + i + 4) % 4;
-        Card card = board.get(i);
-        for (int j = 0; j < 4; this.hasCard[j++][card.suit][card.strength - 2] = this.NEVER);
-        if (card.suit != leadSuit) {
-          for (int j = 0; j < 4; j++) {
-            for (int k = 0; k < 13; k++) {
-              this.hasCard[submitter][j][k] = this.NEVER;
-            }
+    int firstPlayer = (myStatus.id - board.size() + 4) % 4;
+    List<Card> receivedCards = null;
+    for (Player.Status status : otherPlayerStatus) {
+      if (status.id != firstPlayer) continue;
+      receivedCards = status.receivedCards;
+      break;
+    }
+    if (receivedCards != null && receivedCards.size() != 0) {
+      for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+          Card card = receivedCards.get(receivedCards.size() - j - 1);
+          this.hasCard[i][card.suit][card.strength - 2] = this.NEVER;
+        }
+      }
+    }
+
+    for (int i = 0; i < board.size(); i++) {
+      int submitter = (myStatus.id - board.size() + i + 4) % 4;
+      Card card = board.get(i);
+      for (int j = 0; j < 4; this.hasCard[j++][card.suit][card.strength - 2] = this.NEVER);
+      if (card.suit != leadSuit) {
+        for (int j = 0; j < 4; j++) {
+          for (int k = 0; k < 13; k++) {
+            this.hasCard[submitter][j][k] = this.NEVER;
           }
         }
       }
-
-      this.isFirstTurn = false;
     }
 
     // もしプレイ可能な手札が1枚だった場合、それを出す
