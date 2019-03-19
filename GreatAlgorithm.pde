@@ -62,10 +62,34 @@ class GreatAlgorithm extends Algorithm {
         }
       }
 
-      // もしプレイ可能な手札が1枚だった場合、それを出す
-      List<Card> playableHand = Utils.getPlayableHand(hand, leadSuit, isHeartBroken);
-      if (playableHand.size() == 0) return playableHand.get(0);
-      
+      this.isFirstTurn = false;
+    }
+
+    // もしプレイ可能な手札が1枚だった場合、それを出す
+    List<Card> playableHand = Utils.getPlayableHand(hand, leadSuit, isHeartBroken);
+    if (playableHand.size() == 0) return playableHand.get(0);
+
+    if (leadSuit == null) {
+      // 初手で何を出すか
+      return playableHand.get(0);
+    }
+
+    //  場のスートを持っているか
+    boolean hasLeadSuit = false;
+    for (Card card : playableHand) {
+      if (card.suit == leadSuit) {
+        hasLeadSuit = true;
+        break;
+      }
+    }
+
+    if (hasLeadSuit) {
+      // pass
+    } else {
+      for (Card card : playableHand) {
+        if (card.suit == Card.SPADES && card.number == 12) return card;
+      }
+
       // hoge
       int canReceive = this.NEVER;
       for (int i = 0; i < 3 - board.size(); i++) {
@@ -74,13 +98,8 @@ class GreatAlgorithm extends Algorithm {
         for (int j = 0; j < 13; j++) {
           if (this.hasCard[nextPlayer][leadSuit][j] != this.NEVER) leadSuitCount++;
         }
-        
       }
-
-      this.isFirstTurn = false;
     }
-
-    List<Card> playableHand = Utils.getPlayableHand(hand, leadSuit, isHeartBroken);
 
     return playableHand.get(0);
   }
