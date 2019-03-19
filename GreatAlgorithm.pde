@@ -102,6 +102,25 @@ class GreatAlgorithm extends Algorithm {
         }
       }
       // losable[suit]がtrueなら、そのsuitで絶対負けられる
+      
+      // losable[suit]がtrueで枚数が最も少ないsuitを選ぶ
+      int [] suitArray = suitNum(playableHand);
+      int minSuit = -1;
+      for(int i = 0; i < 4; i++){
+        if (losable[i]) {
+          if (minSuit == -1 && suitArray[i] != 0){
+            minSuit = i;
+            continue;
+          }
+          if (suitArray[i] < suitArray[minSuit] && suitArray[i] != 0){
+            minSuit = i;
+          }
+        }
+      }
+      if (minSuit != -1){
+        return weakestHand[minSuit];
+      }
+
       return playableHand.get(0);
     }
 
