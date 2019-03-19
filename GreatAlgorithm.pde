@@ -71,6 +71,37 @@ class GreatAlgorithm extends Algorithm {
 
     if (leadSuit == null) {
       // 初手で何を出すか
+      Card[] weakestHand = new Card [4];
+      for (Card card : playableHand) {
+        weakestHand[card.suit] = weakestHand[card.suit].strength < card.strength ? weakestHand[card.suit] : card;
+      }
+      boolean [] losable = new boolean [4];
+      for (int suit = 0; suit < 4; suit++) {
+        if (weakestHand[suit].number < 5) {
+          losable[suit] = true;
+          continue;
+        }
+        boolean [] lose = { true, true, true, true };
+        for (int i = 0; i < 4; i++) {
+          for (int j = 0; j < 13; j++) {
+            if (this.hasCard[i][suit][j] == this.NEVER) continue;
+            lose[i] = false;
+            break;
+          }
+        }
+        for (int i = 0; i < 4; i++) {
+          for (int j = 0; j < weakestHand[suit].strength - 3; j++) {
+            if (this.hasCard[i][suit][j] == this.NEVER) continue;
+            lose[i] = true;
+            break;
+          }
+        }
+        for (int i = 0; i < 4; i++) {
+          if (i == myStatus.id) continue;
+          if (!lose[i]) losable[suit] = true;
+        }
+      }
+      // losable[suit]がtrueなら、そのsuitで絶対負けられる
       return playableHand.get(0);
     }
 
