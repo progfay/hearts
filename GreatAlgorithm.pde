@@ -83,14 +83,7 @@ class GreatAlgorithm extends Algorithm {
       }
     }
 
-    if (hasLeadSuit) {
-      // pass
-    } else {
-      for (Card card : playableHand) {
-        if (card.suit == Card.SPADES && card.number == 12) return card;
-      }
-
-      // hoge
+    if (hasLeadSuit) { // 場のスートを持っている場合
       int canReceive = this.NEVER;
       for (int i = 0; i < 3 - board.size(); i++) {
         int nextPlayer = (myStatus.id + i) % 4;
@@ -99,6 +92,19 @@ class GreatAlgorithm extends Algorithm {
           if (this.hasCard[nextPlayer][leadSuit][j] != this.NEVER) leadSuitCount++;
         }
       }
+    } else {  // 場のスートを持っていない場合
+      Card submit = null;
+      int [] suitCount = suitNum(playableHand);
+      for (Card card : playableHand) {
+        if (card.suit == Card.SPADES && card.number == 12) return card;
+        submit = submit == null ? card
+          : submit.strength > card.strength ? submit
+          : submit.strength < card.strength ? card
+          : suitCount[submit.suit] > suitCount[card.suit] ? submit
+          : suitCount[submit.suit] < suitCount[card.suit] ? card
+          : submit.suit < card.suit ? submit : card;
+      }
+      return submit;
     }
 
     return playableHand.get(0);
@@ -107,6 +113,18 @@ class GreatAlgorithm extends Algorithm {
   List<Card> choiceExchange(List hand) {
     this.passedCards = hand.subList(0, 3);
     return this.passedCards;
+  }
+
+  int [] suitNum(List<Card> cards) {
+    int [] suitArray = {0, 0, 0, 0};
+    for (Card card : cards) suitArray[card.suit]++;
+    return suitArray;
+  }
+
+  int countSuit(int suit, List<Card> cards) {
+    int count = 0;
+    for (Card card : cards) if (card.suit==suit)count++;
+    return count;
   }
 
   //int canReceive (List<Card> board, Card card, int leadSuit) {
